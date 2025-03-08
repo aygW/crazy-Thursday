@@ -10,11 +10,11 @@ struct Node{
 };
 int main(){
     int a,flag2=0;
-    char c,ch;
     int *numlist=(int *)malloc(sizeof(int));
     struct Node *head,*p,*q;
     head=p=NULL;
-    /*while((ch=getchar())!='\n'){
+    /*char c,ch;
+    while((ch=getchar())!='\n'){
         int flag1=0;
         do{
             scanf("%d%c",&a,&c);
