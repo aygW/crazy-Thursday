@@ -12,7 +12,7 @@ def plot_stacked_bar(width=0.5):
     fig, ax = plt.subplots()
     bottom = [0 for i in range(len(weeks))]
     for e, ef in emotion_freq.items():
-        p = ax.bar(weeks, ef, width, label=e, bottom=bottom)
+        ax.bar(weeks, ef, width, label=e, bottom=bottom)
         for i in range(len(bottom)):
             bottom[i]+=ef[i]
     ax.legend()
