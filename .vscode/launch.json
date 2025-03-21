@@ -10,7 +10,7 @@
             "name": "(gdb) 启动",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${/workspaces/crazy-Thursday/crazy-Thursday}.exe",  //输入程序名称(也就是需要调试的文件)，例如 ${workspaceFolder}/a.exe
+            "program": "${/workspaces/crazy-Thursday}.exe",  //输入程序名称(也就是需要调试的文件)，例如 ${workspaceFolder}/a.exe
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
