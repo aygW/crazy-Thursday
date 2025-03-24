@@ -3,7 +3,7 @@ from collections import Counter
 from wordcloud import WordCloud
 #from nltk.corpus import stopwords
 import matplotlib.pyplot as plt
-from pylab import mpl
+from pylab import matplotlib as mpl
 import spacy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from gensim.models import Word2Vec
