@@ -1,8 +1,9 @@
 from sklearn.feature_extraction.text import CountVectorizer,TfidfVectorizer
 from scipy.sparse import csr_matrix
+import re
 
 class DocumentToMatrix:
-    def __init__(self,method='count',max_features=None,ngram_range=(1,1),file_set={'1':{}}):
+    def __init__(self,method='count',max_features=20,ngram_range=(1,1),file_set={'1':{}}):
         """
         初始化文档转换器。
 
@@ -56,9 +57,9 @@ class DocumentToMatrix:
         """
         matr_dict={ID:{} for ID in self.file_set}
         spli=r"[./]"
-        for ID in self.file_set:
+        for ID in self.file_set.keys():
             for file in self.file_set[ID]:
-                time=file.split(spli)[-2]
+                time=re.split(spli,file)[-2]
                 fre_matr=self.fit_transform(file)
                 fea_nam=self.get_fea_names()
                 matr_dict[ID][time]=(fre_matr,fea_nam)

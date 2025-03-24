@@ -27,16 +27,16 @@ class DocumentPreConditionor:
         if not os.path.exists(directory):
             os.makedirs(directory)
         return
-    def text_precon_period(self):
+    def text_precon_period(self,string):
         """
         将导入文件中的评论根据其评论时间按所需的时间精度存入对应字典中。
 
         """
-        ind=self.text[self.text['comment_time']==self.accuracy].index[0]
+        ind=self.text[self.text['comment_time']==string].index[0]
         comment=self.text.loc[ind,'cus_comment']
         ID=str(self.text.loc[ind,'shopID'])
         spli=r"[-/: ]"
-        t_list=re.split(spli,self.accuracy)  
+        t_list=re.split(spli,string)  
         spltime='-'.join(map(str,t_list[:self.t_dict[self.accuracy]]))
         if(spltime not in self.ID_dict[ID]):
             self.ID_dict[ID][spltime]=[comment]
@@ -56,5 +56,5 @@ class DocumentPreConditionor:
                 with open(file_name,'w',encoding='utf-8') as f:
                     for com in self.ID_dict[key][keyy]:
                         f.write(str(com)+'\n')
-                self.com_dict[key].update(file_name)
+                self.com_dict[key].add(str(file_name))
         return self.com_dict

@@ -3,6 +3,9 @@ import pyLDAvis
 import numpy as np
 import pickle
 import matplotlib.pyplot as plt
+from pylab import matplotlib as mpl
+mpl.rcParams['font.sans-serif'] = ['SimHei']
+mpl.rcParams['axes.unicode_minus'] = False
 
 class TextTopicAnalyzer:
     def __init__(self,feature_matrix,feature_names,n_topics=5):
@@ -17,13 +20,18 @@ class TextTopicAnalyzer:
         self.feature_names=feature_names
         self.n_topics=n_topics
         self.lda_model=None
-    def build_lda_model(self):
+    def build_lda_model(self,flag=0):
         """
         构建LDA主题模型。
 
         """
         self.lda_model=LatentDirichletAllocation(n_components=self.n_topics,random_state=42)
         self.lda_model.fit(self.feature_matrix)
+        '''if(flag==1):
+            doc_topic_dists=self.lda_model.transform(self.feature_matrix)
+            return doc_topic_dists'''
+        if(flag==1):
+            return self.lda_model
         return
     def display_topics(self,n_words=10):
         """
@@ -48,12 +56,17 @@ class TextTopicAnalyzer:
             raise ValueError("LDA 模型尚未构建。")
         
         topic_term_dists=self.lda_model.components_/self.lda_model.components_.sum(axis=1)[:,np.newaxis]
+        doc_topic_dists=self.lda_model.transform(self.feature_matrix)
+        doc_lengths=np.sum(self.feature_matrix, axis=1)  
+        vocab=self.feature_names
+        term_frequency=np.ravel(self.feature_matrix.sum(axis=0))
+        mds='tsne'
         vis=pyLDAvis.prepare(topic_term_dists=topic_term_dists,
-                            doc_topic_dists=self.lda_model.transform(self.feature_matrix),
-                            doc_lengths=np.sum(self.feature_matrix,axis=1).A1,
-                            vocab=self.feature_names,
-                            term_frequency=np.ravel(self.feature_matrix.sum(axis=0)),
-                            mds='tsne')
+                            doc_topic_dists=doc_topic_dists,
+                            doc_lengths=doc_lengths, 
+                            vocab=vocab,
+                            term_frequency=term_frequency,
+                            mds=mds)
         pyLDAvis.display(vis)
         return
     def save(self,filename):
@@ -96,7 +109,7 @@ class TextTopicAnalyzer:
         self.build_lda_model()
         self.display_topics(n_words=n_words)
         self.visualize_lda_model()
-    def plot_perplexity(self,max_topics=20):
+    def plot_perplexity(self,max_topics=20,fig1_name=None):
         """
         绘制困惑度随话题数目变化的曲线。
 
@@ -114,35 +127,5 @@ class TextTopicAnalyzer:
         plt.ylabel('困惑度')
         plt.title('困惑度与话题数目曲线')
         plt.grid(True)
+        plt.savefig(fig1_name,format='png',dpi=300)
         plt.show()
-
-    '''def topic_time_trend(self,doc_dates,topic_idx,time_bins=10):
-        """
-        分析特定话题在不同时间段内的出现频率或权重。
-
-        :param doc_dates:文档的时间信息列表。
-        :param topic_idx:要分析的话题编号。
-        :param time_bins:时间段的数量。
-        """
-        if(self.lda_model is None):
-            raise ValueError("LDA 模型尚未构建。")
-
-        doc_topic_distributions=self.lda_model.transform(self.feature_matrix)
-        topic_probabilities=doc_topic_distributions[:,topic_idx]
-
-        doc_dates_numeric=np.array([date.timestamp() for date in doc_dates])
-        bins=np.linspace(doc_dates_numeric.min(),doc_dates_numeric.max(),time_bins+1)
-        bin_indices=np.digitize(doc_dates_numeric,bins)
-
-        topic_prob_per_bin=[]
-        for bin_idx in range(1, time_bins+1):
-            bin_mask = bin_indices==bin_idx
-            topic_prob_per_bin.append(topic_probabilities[bin_mask].mean())
-
-        plt.figure(figsize=(10,6))
-        plt.plot(range(time_bins),topic_prob_per_bin,marker='o')
-        plt.xlabel('Time Bin')
-        plt.ylabel('Average Topic Probability')
-        plt.title(f'Topic {topic_idx+1} Time Trend')
-        plt.grid(True)
-        plt.show()'''
